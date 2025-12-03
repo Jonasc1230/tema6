@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="da">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Favoritter</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        /* ===== Header styles ===== */
+        .site-header {
+            background: #7c8f7a;
+            min-height: 72px;
+            position: relative;
+            padding-top: 8px;
+            padding-bottom: 10px;
+        }
+
+        .brand-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 6px;
+            z-index: 3;
+        }
+
+        .search-wrap { margin-top: 44px; padding-bottom: 8px; }
+
+        .search-field {
+            width: 100%;
+            max-width: 420px;
+            border-radius: 999px;
+            height: 34px;
+            padding: 6px 12px;
+            border: none;
+            box-shadow: none;
+        }
+
+        .nav-heart { font-size: 1.15rem; }
+
+        /* Offcanvas drawer */
+        .offcanvas-start { width: 320px; max-width: 85vw; }
+        .offcanvas-body { padding: 1.25rem; }
+
+        .menu-link {
+            display: block;
+            padding: 14px 0;
+            font-size: 1rem;
+            width: 100%;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .menu-link:hover,
+        .menu-link:focus,
+        .menu-link:active { color: inherit; text-decoration: none; }
+
+        .menu-divider { height: 1px; background: #e6e6e6; margin: 10px 0 6px; }
+
+        .submenu { display: none; animation: fadeIn .12s ease; }
+        .submenu.show { display: block; }
+
+        .back-row {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            padding-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .group-title { font-weight: 600; margin-top: 8px; margin-bottom: 6px; }
+        .group-list { padding-left: 8px; }
+        .group-list li { padding: 6px 0; list-style: none; }
+
+        .offcanvas .btn-close.custom-close {
+            position: absolute;
+            left: 8px; top: 8px;
+            background: none; border: none;
+        }
+
+        .offcanvas .off-heart {
+            position: absolute;
+            right: 12px; top: 8px;
+            opacity: .8;
+            font-size: 1.15rem;
+        }
+
+        .group-sep { margin: 10px 0; border-top: 1px solid #eee; }
+
+        @keyframes fadeIn { from { opacity:0; transform: translateX(6px); } to { opacity:1; transform:none; } }
+
+        @media (max-width: 480px) {
+            .search-wrap { margin-top: 36px; }
+            .brand-center img { height: 34px; }
+            .site-header { min-height: 64px; }
+        }
+
+        /* ===== Footer styles (single correct footer) ===== */
+        #siteFooter { z-index: 1040; background: #7c8f7a; }
+        #siteFooter .icon {
+            width: 44px;
+            height: 44px;
+            background: #000;
+            border-radius: 6px;
+            color: #fff;
+            text-decoration: none;
+            transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #siteFooter .icon:hover,
+        #siteFooter .icon:focus {
+            transform: translateY(-3px) scale(1.03);
+            background: #111;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            text-decoration: none;
+        }
+
+        @media (max-width: 360px) {
+            #siteFooter .icon { width: 40px; height: 40px; }
+            #siteFooter .footer-contact { font-size: .95rem; }
+        }
+
+        #siteFooter .footer-contact { word-break: break-word; white-space: normal; }
+
+        /* utility */
+        .btn-ghost { background: transparent; border: none; padding: 0; }
+    </style>
+</head>
+<body>
+
+<!-- ===== Sticky header ===== -->
+<header class="site-header sticky-top shadow-sm">
+    <div class="container position-relative">
+        <nav class="d-flex align-items-start" aria-label="Main navigation">
+            <!-- Left toggler -->
+            <button class="btn btn-ghost p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#drawer" aria-controls="drawer">
+                <i class="bi bi-list" style="font-size:1.6rem;"></i>
+            </button>
+
+            <!-- Center logo -->
+            <a class="brand-center" href="./index.html" aria-label="Home">
+                <img src="https://via.placeholder.com/78x78.png?text=Logo" alt="Logo"
+                     style="height:56px; width:56px; object-fit:cover; border-radius:50%; border:2px solid #1a1a1a; background:#fff;">
+            </a>
+
+            <!-- Right heart -->
+            <div class="ms-auto" style="z-index:4;">
+                <a class="nav-heart text-dark px-2" href="./likes.html" title="Likes" aria-label="Likes">
+                    <i class="bi bi-heart"></i>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Search under logo -->
+        <div class="d-flex justify-content-center search-wrap">
+            <div class="w-100 d-flex justify-content-center">
+                <input class="search-field" type="search" placeholder="Søg..." aria-label="Search">
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ===== OFFCANVAS: left drawer ===== -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="drawer" aria-labelledby="drawerLabel">
+    <div class="offcanvas-header" style="border-bottom:none; padding:.5rem 1rem;">
+        <button type="button" class="btn-close custom-close" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="bi bi-x-lg"></i>
+        </button>
+        <div class="off-heart"><i class="bi bi-heart"></i></div>
+    </div>
+
+    <div class="offcanvas-body pt-2">
+        <!-- MAIN MENU -->
+        <div id="mainMenu">
+            <div class="menu-item d-flex justify-content-between align-items-center" id="openOversigt" role="button" tabindex="0" aria-controls="oversigtSub" aria-expanded="false">
+                <div>Oversigt over instaspots</div>
+                <div><i class="bi bi-chevron-right"></i></div>
+            </div>
+
+            <div class="menu-divider"></div>
+
+            <a class="menu-link" href="./brugergalleri.html" role="link">Brugergalleri</a>
+
+            <div class="menu-divider"></div>
+
+            <a class="menu-link" href="kontakt.html" role="link">Kontakt</a>
+        </div>
+
+        <!-- SUBMENU -->
+        <div id="oversigtSub" class="submenu" aria-hidden="true">
+            <div class="back-row" id="backToMain" role="button" tabindex="0" aria-label="Back to main menu">
+                <i class="bi bi-chevron-left"></i>
+                <div style="font-weight:600;">Oversigt over instaspots</div>
+            </div>
+
+            <div class="group-sep"></div>
+
+            <div class="group">
+                <div class="group-title">Butikker</div>
+                <ul class="group-list">
+                    <li><a class="menu-link" href="./butikker/binderiet.html">Binderiet</a></li>
+                    <li><a class="menu-link" href="./butikker/vitrinen.html">Vitrinen</a></li>
+                </ul>
+            </div>
+
+            <div class="group-sep"></div>
+
+            <div class="group">
+                <div class="group-title">Steder</div>
+                <ul class="group-list">
+                    <li><a class="menu-link" href="./steder/havnen.html">Havnen</a></li>
+                    <li><a class="menu-link" href="./steder/torvet.html">Torvet</a></li>
+                    <li><a class="menu-link" href="./steder/den-gamle-by.html">Den gamle by</a></li>
+                    <li><a class="menu-link" href="./steder/den-hvide-bro.html">Den hvide bro</a></li>
+                </ul>
+            </div>
+
+            <div class="group-sep"></div>
+
+            <div class="group">
+                <div class="group-title">Cafeer</div>
+                <ul class="group-list">
+                    <li><a class="menu-link" href="./cafeer/havnen.html">Havnen</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ===== Main content placeholder ===== -->
+<main class="container my-5">
+    <h1>I skal arbejde herfra</h1>
+</main>
+
+<!-- ===== Footer (single correct footer) ===== -->
+<footer id="siteFooter" class="fixed-bottom shadow">
+    <div class="container">
+        <div class="row align-items-center gx-3" style="min-height:72px;">
+            <!-- Left contact -->
+            <div class="col-6 col-md-6 text-start">
+                <div class="footer-contact text-dark" style="font-size:1rem; line-height:1.2;">
+                    Kontakt@KøgeRuten.dk<br>+45 XX XX XX XX
+                </div>
+            </div>
+
+            <!-- Right icons -->
+            <div class="col-6 col-md-6 text-end">
+                <div class="d-inline-flex align-items-center gap-2 footer-icons">
+                    <a href="https://instagram.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="Instagram" target="_blank" rel="noopener">
+                        <i class="bi bi-instagram" style="font-size:1.2rem; color:#fff;"></i>
+                    </a>
+                    <a href="https://facebook.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="Facebook" target="_blank" rel="noopener">
+                        <i class="bi bi-facebook" style="font-size:1.2rem; color:#fff;"></i>
+                    </a>
+                    <a href="https://tiktok.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="TikTok" target="_blank" rel="noopener">
+                        <i class="bi bi-tiktok" style="font-size:1.2rem; color:#fff;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== Scripts ===== -->
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Auto-adjust bottom padding equal to footer height (prevents overlap) -->
+<script>
+    (function(){
+        const footer = document.getElementById('siteFooter');
+
+        function updateBodyPadding(){
+            if(!footer) return;
+            const rect = footer.getBoundingClientRect();
+            const height = Math.ceil(rect.height);
+            document.documentElement.style.setProperty('--footer-height', height + 'px');
+            document.body.style.paddingBottom = height + 'px';
+        }
+
+        // initial + update on events
+        window.addEventListener('resize', updateBodyPadding);
+        window.addEventListener('load', updateBodyPadding);
+        updateBodyPadding();
+    })();
+</script>
+
+<!-- Improved offcanvas/submenu + robust link handling -->
+<script>
+    (function(){
+        const openBtn = document.getElementById('openOversigt');
+        const mainMenu = document.getElementById('mainMenu');
+        const sub = document.getElementById('oversigtSub');
+        const back = document.getElementById('backToMain');
+        const drawer = document.getElementById('drawer');
+
+        function openSubmenu(){
+            mainMenu.style.display = 'none';
+            sub.classList.add('show');
+            sub.setAttribute('aria-hidden', 'false');
+            openBtn.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeSubmenu(){
+            sub.classList.remove('show');
+            sub.setAttribute('aria-hidden', 'true');
+            setTimeout(()=> mainMenu.style.display = '', 0);
+            openBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        openBtn?.addEventListener('click', openSubmenu);
+        openBtn?.addEventListener('keydown', function(e){
+            if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openSubmenu(); }
+        });
+
+        back?.addEventListener('click', closeSubmenu);
+        back?.addEventListener('keydown', function(e){
+            if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); closeSubmenu(); }
+        });
+
+        // Reset submenu when offcanvas closes
+        drawer.addEventListener('hidden.bs.offcanvas', function(){ closeSubmenu(); });
+
+        // Robust click handler for links inside the offcanvas
+        drawer.addEventListener('click', function(e){
+            const link = e.target.closest('a.menu-link');
+            if(!link) return;
+
+            // allow opt-out from auto-close with data-no-close="true"
+            if(link.dataset.noClose === "true") return;
+
+            let href = link.getAttribute('href') || '';
+            const isRelative = href.startsWith('/') || href.startsWith('./') || href.startsWith('../');
+            const hasProtocol = href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('tel:');
+
+            // If it looks like an external host but missing protocol (e.g. "instagram.com"), add https://
+            if(!hasProtocol && !isRelative && /\.[a-z]{2,}$/i.test(href)){
+                href = 'https://' + href.replace(/^https?:\/\//, '');
+            }
+
+            const targetBlank = link.target === '_blank';
+
+            // close the offcanvas then navigate
+            const bsOff = bootstrap.Offcanvas.getInstance(drawer);
+            if(bsOff) bsOff.hide();
+
+            setTimeout(()=>{
+                if(targetBlank){
+                    window.open(href, '_blank', 'noopener');
+                } else {
+                    window.location.href = href;
+                }
+            }, 160);
+        });
+    })();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</main>
+
+<!-- ===== Footer: fixed to bottom ===== -->
+<footer id="siteFooter" class="fixed-bottom shadow">
+    <div class="container">
+        <div class="row align-items-center gx-3" style="min-height:72px;">
+            <div class="col-6 col-md-6 text-start">
+                <div class="footer-contact text-dark" style="font-size:1rem; line-height:1.2;">
+                    Kontakt@KøgeRuten.dk<br>+45 XX XX XX XX
+                </div>
+            </div>
+
+            <div class="col-6 col-md-6 text-end">
+                <div class="d-inline-flex align-items-center gap-2 footer-icons">
+                    <a href="https://instagram.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="Instagram">
+                        <i class="bi bi-instagram" aria-hidden="true" style="font-size:1.2rem;"></i>
+                    </a>
+                    <a href="https://facebook.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="Facebook">
+                        <i class="bi bi-facebook" aria-hidden="true" style="font-size:1.2rem;"></i>
+                    </a>
+                    <a href="https://tiktok.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="TikTok">
+                        <i class="bi bi-tiktok" aria-hidden="true" style="font-size:1.2rem;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Auto-adjust bottom padding to prevent footer overlap -->
+<script>
+    (function(){
+        const footer = document.getElementById('siteFooter');
+
+        function updateBodyPadding(){
+            if(!footer) return;
+            const rect = footer.getBoundingClientRect();
+            const height = Math.ceil(rect.height);
+            document.documentElement.style.setProperty('--footer-height', height + 'px');
+            document.body.style.paddingBottom = height + 'px';
+        }
+
+        window.addEventListener('resize', updateBodyPadding);
+        window.addEventListener('load', updateBodyPadding);
+        // initial call
+        updateBodyPadding();
+    })();
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Offcanvas submenu behaviour + keyboard support -->
+<script>
+    (function(){
+        const openBtn = document.getElementById('openOversigt');
+        const mainMenu = document.getElementById('mainMenu');
+        const sub = document.getElementById('oversigtSub');
+        const back = document.getElementById('backToMain');
+        const drawer = document.getElementById('drawer');
+
+        function openSubmenu(){
+            mainMenu.style.display = 'none';
+            sub.classList.add('show');
+            sub.setAttribute('aria-hidden', 'false');
+            // update chevron aria
+            openBtn.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeSubmenu(){
+            sub.classList.remove('show');
+            sub.setAttribute('aria-hidden', 'true');
+            setTimeout(()=> mainMenu.style.display = '', 0);
+            openBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        openBtn?.addEventListener('click', openSubmenu);
+        // keyboard: Enter/Space to open
+        openBtn?.addEventListener('keydown', function(e){
+            if(e.key === 'Enter' || e.key === ' '){
+                e.preventDefault();
+                openSubmenu();
+            }
+        });
+
+        back?.addEventListener('click', closeSubmenu);
+        back?.addEventListener('keydown', function(e){
+            if(e.key === 'Enter' || e.key === ' '){
+                e.preventDefault();
+                closeSubmenu();
+            }
+        });
+
+        // Ensure state resets when offcanvas closes
+        drawer.addEventListener('hidden.bs.offcanvas', function(){
+            closeSubmenu();
+        });
+
+        // Optional: close offcanvas when clicking any internal link (helpful for SPA or fast nav)
+        drawer.addEventListener('click', function(e){
+            const link = e.target.closest('a.menu-link');
+            if(link){
+                // allow default navigation; but also hide offcanvas immediately for snappier UX
+                const bsOff = bootstrap.Offcanvas.getInstance(drawer);
+                if(bsOff) bsOff.hide();
+            }
+        });
+    })();
+</script>
+</body>
+</html>
