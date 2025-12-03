@@ -12,6 +12,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
+        :root{
+            --green:#709270;
+            --pill-pink:#EEB8C5;
+            --pill-pink-text:#6b2b4b;
+        }
+        body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Helvetica Neue"; margin:0; }
+        </style>
+
+    <style>
         /* ===== Header styles ===== */
         .site-header {
             background: #7c8f7a;
@@ -239,18 +248,31 @@
 
 <!-- ===== Main content placeholder ===== -->
 <main class="container my-5">
-    <h1>Dine favoritter</h1>
+    <h1 class="text-center">Dine favoritter</h1>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
+    <style>
+        .my-button {
+            background-color: #EEB8C5; /* lyserød */
+            color: white;
+            border: none;
+        }
+        .my-button:hover {
+            background-color: #6b2b4b; /* mørkere lyserød */
+        }
+    </style>
+
+
     <div class="container mt-4">
         <div class="row g-4">
+
             <!-- Billede 1 -->
             <div class="col-md-6">
                 <div class="card">
-                    <img src="InstaBilleder/Vitrinen3.JPG" class="card-img-top" alt="Billede 1">
+                    <img src="InstaBilleder/Vitrinen3.JPG" class="card-img-top w-75 mx-auto d-block" alt="Billede 1">
                     <div class="card-body text-center">
-                        <a href="#" class="btn btn-primary">Vitrinen</a>
+                        <a href="#" class="btn my-button">Vitrinen</a>
                     </div>
                 </div>
             </div>
@@ -258,9 +280,9 @@
             <!-- Billede 2 -->
             <div class="col-md-6">
                 <div class="card">
-                    <img src="InstaBilleder/KøgesKaffebar.jpg" class="card-img-top" alt="Billede 2">
+                    <img src="InstaBilleder/KøgesKaffebar.jpg" class="card-img-top w-75 mx-auto d-block" alt="Billede 2">
                     <div class="card-body text-center">
-                        <a href="#" class="btn btn-primary">Køges Kaffebar</a>
+                        <a href="#" class="btn my-button">Køges Kaffebar</a>
                     </div>
                 </div>
             </div>
@@ -268,9 +290,9 @@
             <!-- Billede 3 -->
             <div class="col-md-6">
                 <div class="card">
-                    <img src="InstaBilleder/KøgeTorvSkiltet.jpg" class="card-img-top" alt="Billede 3">
+                    <img src="InstaBilleder/KøgeTorvSkiltet.jpg" class="card-img-top w-75 mx-auto d-block" alt="Billede 3">
                     <div class="card-body text-center">
-                        <a href="#" class="btn btn-primary">Torvet</a>
+                        <a href="#" class="btn my-button">Torvet</a>
                     </div>
                 </div>
             </div>
@@ -278,9 +300,9 @@
             <!-- Billede 4 -->
             <div class="col-md-6">
                 <div class="card">
-                    <img src="InstaBilleder/Binderiet1.jpg" class="card-img-top" alt="Billede 4">
+                    <img src="InstaBilleder/Binderiet1.jpg" class="card-img-top w-75 mx-auto d-block" alt="Billede 4">
                     <div class="card-body text-center">
-                        <a href="#" class="btn btn-primary">Binderiet</a>
+                        <a href="#" class="btn my-button">Binderiet</a>
                     </div>
                 </div>
             </div>
