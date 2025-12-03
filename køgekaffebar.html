@@ -236,52 +236,48 @@
     </div>
 </div>
 
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-6">
-            <h2>Kontakt os</h2>
-            <p>
-                Har du spørgsmål om vores guide til Køge, seværdighederne, caféerne eller de lokale butikker?<br>
-                Vi står klar til at hjælpe dig med at finde præcis det, du leder efter.
-            </p>
+<section class="container py-5">
+    <!-- Titel og hovedbillede -->
+    <h2 class="mb-4">Køges kaffebar</h2>
+    <img src="images/kaffebar.webp" alt="Køges Kaffebar" class="img-fluid rounded mb-4">
 
-            <div class="info mb-4">
-                <p><strong>E-mail:</strong> Kontakt@KøgeRuten.dk</p>
-                <p><strong>Telefon:</strong> +45 XX XX XX XX <i class="fa-solid fa-phone"></i></p>
-                <p><strong>Adresse:</strong> Strandvejen 12, 4600 Køge <i class="fa-solid fa-house"></i></p>
-            </div>
+    <!-- Beskrivelse -->
+    <p>
+        Køges Kaffebar er stedet, hvor du både får god kaffe og godt content til dit feed. Den hyggelige kaffebar ligger midt i Køge og har en stemning, der nærmest er skabt til stories og close-ups af latte-art og kager.
+    </p>
+    <p>
+        Her er der kælet for detaljerne i både indretning og kop, så du kan hænge ud med vennerne, få den bedste kaffe og samtidig tage billeder.
+    </p>
+    <p>
+        Kig forbi, slå dig ned, og fang den afslappede, insta-værdige vibe, mens du nyder kaffen.
+    </p>
 
-            <form>
-                <div class="mb-3">
-                    <label class="form-label">Navn</label>
-                    <input class="form-control" placeholder="Dit navn">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">E-mail</label>
-                    <input type="email" class="form-control" placeholder="Navn@eksempel.dk">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Besked</label>
-                    <textarea class="form-control" rows="3"></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Send besked</button>
-            </form>
+    <!-- Læs mere sektion -->
+    <div class="row mt-5">
+        <div class="col-md-4 mb-4">
+            <img src="images/kaffebar1.webp" alt="Kaffebar detalje 1" class="img-fluid rounded">
+            <a href="#" class="btn btn-outline-dark mt-2 w-100">Læs mere</a>
         </div>
-
-        <div class="col-md-6 d-flex align-items-center justify-content-center">
-            <img src="images/kontaktbilled.png" alt="Kontakt" class="img-fluid rounded w-75">
+        <div class="col-md-4 mb-4">
+            <img src="images/kaffebar2.webp" alt="Kaffebar detalje 2" class="img-fluid rounded">
+            <a href="#" class="btn btn-outline-dark mt-2 w-100">Læs mere</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <img src="images/kaffebar3.webp" alt="Kaffebar detalje 3" class="img-fluid rounded">
+            <a href="#" class="btn btn-outline-dark mt-2 w-100">Læs mere</a>
         </div>
     </div>
-</div>
-<script>
-    document.querySelector('form').addEventListener('submit', function(e) {
-        e.preventDefault(); // forhindrer at siden reloades
-        alert('Tak for din besked! Vi vender tilbage hurtigst muligt.');
-    });
-</script>
+
+    <!-- Kort -->
+    <div class="mt-5">
+        <h4>Find Køges kaffebar her</h4>
+        <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2241.123456789!2d12.181234!3d55.456789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x123456789abcdef!2sKøges%20Kaffebar!5e0!3m2!1sen!2sdk!4v1234567890"
+                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+    </div>
+</section>
+
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
@@ -314,21 +310,21 @@
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-(function(){
-const footer = document.getElementById('siteFooter');
-function updateBodyPadding(){
-if(!footer) return;
-const rect = footer.getBoundingClientRect();
-const height = Math.ceil(rect.height);
-document.documentElement.style.setProperty('--footer-height', height + 'px');
-document.body.style.paddingBottom = height + 'px';
-}
+    (function(){
+        const footer = document.getElementById('siteFooter');
+        function updateBodyPadding(){
+            if(!footer) return;
+            const rect = footer.getBoundingClientRect();
+            const height = Math.ceil(rect.height);
+            document.documentElement.style.setProperty('--footer-height', height + 'px');
+            document.body.style.paddingBottom = height + 'px';
+        }
 
 // initial + update on events
-window.addEventListener('resize', updateBodyPadding);
-window.addEventListener('load', updateBodyPadding);
-updateBodyPadding();
-})();
+        window.addEventListener('resize', updateBodyPadding);
+        window.addEventListener('load', updateBodyPadding);
+        updateBodyPadding();
+    })();
 </script>
 
 <!-- Improved offcanvas/submenu + robust link handling -->
