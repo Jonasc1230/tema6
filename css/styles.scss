@@ -18,3 +18,41 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 @import "bootstrapComponents";
 
 // 5. Du kan lave styling her...
+/* Gør links en smule lavere end brand */
+
+
+.btn-pink {
+  background-color: #e75480; /* pink farve */
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-pink:hover {
+  background-color: #d1436f; /* mørkere pink ved hover */
+  transform: translateY(-2px);
+}
+
+
+
+.container {
+  padding-bottom: 40px;
+}
+
+.info p {
+  margin-bottom: 8px;
+}
+
+
+
+
+
+
+
+
+
