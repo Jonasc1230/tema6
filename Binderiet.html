@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KøgeRuten — Binderiet</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style> 
+    :root{
+      --green:#709270;
+      --pill-pink:#EEB8C5;
+      --pill-pink-text:#6b2b4b;
+    }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Helvetica Neue"; margin:0; }
+
+    /* Header */
+    .site-header { background:var(--green); min-height:72px; position:relative; padding:8px 0 10px; }
+    .brand-center { position:absolute; left:50%; transform:translateX(-50%); top:6px; z-index:3; }
+    .search-wrap { margin-top:44px; padding-bottom:8px; }
+    .search-field { width:100%; max-width:420px; border-radius:999px; height:34px; padding:6px 12px; border:none; }
+
+    /* Offcanvas */
+    .offcanvas-start { width:320px; max-width:85vw; }
+    .offcanvas-body { padding:1.25rem; }
+   /* Submenu: hidden by default so the main menu doesn't duplicate items
+     The JS toggles the 'show' class on the submenu to reveal it. */
+   .submenu { display: none; }
+   .submenu.show { display: block; }
+    .menu-link { display:block; padding:14px 0; font-size:1rem; width:100%; color:inherit; text-decoration:none; }
+    .menu-divider { height:1px; background:#e6e6e6; margin:10px 0 6px; }
+
+    /* Page content */
+    .hero-card { margin-top:12px; margin-bottom:18px; text-align:center; }
+   /* make the hero image noticeably smaller (approx half) but still responsive
+     Default max-width lowered to 320px; on wide screens allow up to 480px */
+   .hero-image-wrap { position:relative; max-width:320px; margin:0 auto; }
+    .hero-image { width:100%; display:block; border-radius:4px; object-fit:cover; height:auto; }
+
+  /* Smooth fade when swapping hero images */
+  .hero-image { transition: opacity .35s ease; }
+
+    .hero-arrow { position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; background:rgba(255,255,255,0.95); border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 8px rgba(0,0,0,0.08); border:none; cursor:pointer; }
+    .hero-arrow.left { left:-12px; } .hero-arrow.right { right:-12px; }
+
+    .spot-title{ margin-top:16px; font-weight:700; font-size:1.15rem; margin-bottom:8px; }
+    .spot-desc{ color:#222; margin:0 auto 14px; max-width:680px; text-align:left; line-height:1.5; font-size:.95rem; }
+
+    /* 3-column responsive grid but stacks on mobile.
+       Images are perfect squares with no rounded corners. */
+    .thumb-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      max-width: 600px;
+      margin: 12px auto 6px;
+      align-items: start;
+      padding: 0 12px;
+    }
+
+    .thumb-wrap {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+    }
+
+    .thumb {
+      width:75%;
+      aspect-ratio: 1 / 1; /* ensures perfect square */
+      border-radius: 0;      /* NO rounded corners */
+      overflow:hidden;
+      display:block;
+      background:#eee;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      text-decoration:none;
+    }
+
+    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* pill label centered under each image, clickable */
+    .pill {
+      padding:7px 14px;
+      border-radius:999px;
+      font-size:.95rem;
+      color:var(--pill-pink-text);
+      background:var(--pill-pink);
+      border:1px solid rgba(107,43,75,0.06);
+      text-decoration:none;
+      display:inline-block;
+      text-align:center;
+      white-space:nowrap;
+    }
+
+    /* Map and other content */
+    .map-wrap { max-width:720px; margin:18px auto; border-radius:6px; overflow:hidden; box-shadow:0 8px 18px rgba(0,0,0,0.06); }
+    .map-wrap iframe { width:100%; height:240px; border:0; display:block; }
+
+    /* Footer */
+    #siteFooter { z-index:1040; background:var(--green); }
+    #siteFooter .icon { width:44px; height:44px; background:#000; border-radius:6px; color:#fff; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; transition:.15s; }
+    #siteFooter .icon:hover { transform: translateY(-3px) scale(1.03); background:#111; box-shadow:0 6px 18px rgba(0,0,0,0.15); }
+
+    /* Responsive breakpoints:
+       - <=820px: 2 columns
+       - <=520px: 1 column (vertical stack) so images won't drop awkwardly */
+    @media (max-width: 820px) {
+      .thumb-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 820px) {
+      .thumb-grid { grid-template-columns: 1fr; gap:12px; padding: 0 16px; }
+      .hero-arrow.left { left:-8px; } .hero-arrow.right { right:-8px; }
+    }
+
+    /* slightly larger hero on very wide screens (keeps it smaller than original 640px) */
+    @media (min-width: 1200px) {
+      .hero-image-wrap { max-width:480px; }
+    }
+
+    .btn-ghost { background:transparent; border:none; padding:0; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header sticky-top shadow-sm">
+    <div class="container position-relative">
+      <nav class="d-flex align-items-start" aria-label="Main navigation">
+        <button class="btn btn-ghost p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#drawer" aria-label="Åbn menu" style="z-index:4;">
+          <i class="bi bi-list" style="font-size:1.6rem;"></i>
+        </button>
+
+        <a class="brand-center" href="./index.html" aria-label="Home">
+          <img src="InstaBilleder/Logo.png" alt="Logo" style="height:56px; width:56px; border-radius:50%; border:2px solid #1a1a1a;">
+        </a>
+
+        <div class="ms-auto" style="z-index:4;">
+          <a class="nav-heart text-dark px-2" href="./likes.html" title="Likes" aria-label="Likes">
+            <i class="bi bi-heart"></i>
+          </a>
+        </div>
+      </nav>
+
+      <div class="d-flex justify-content-center search-wrap">
+        <div class="w-100 d-flex justify-content-center">
+          <input class="search-field" type="search" placeholder="Søg..." aria-label="Search">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Offcanvas (restored normal behavior) -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="drawer" aria-labelledby="drawerLabel">
+    <div class="offcanvas-header" style="border-bottom:none; padding:.5rem 1rem;">
+      <button type="button" class="btn-close custom-close" data-bs-dismiss="offcanvas" aria-label="Luk">
+        <i class="bi bi-x-lg"></i>
+      </button>
+      <div class="off-heart"><i class="bi bi-heart"></i></div>
+    </div>
+
+    <div class="offcanvas-body pt-2">
+      <div id="mainMenu">
+        <div class="menu-item d-flex justify-content-between align-items-center" id="openOversigt" role="button" tabindex="0" aria-controls="oversigtSub" aria-expanded="false">
+          <div>Oversigt over instaspots</div>
+          <div><i class="bi bi-chevron-right"></i></div>
+        </div>
+
+        <div class="menu-divider"></div>
+        <a class="menu-link" href="./brugergalleri.html" role="link">Brugergalleri</a>
+        <div class="menu-divider"></div>
+        <a class="menu-link" href="./kontakt.html" role="link">Kontakt</a>
+      </div>
+
+      <!-- Submenu -->
+      <div id="oversigtSub" class="submenu" aria-hidden="true">
+        <div class="back-row" id="backToMain" role="button" tabindex="0" aria-label="Tilbage">
+          <i class="bi bi-chevron-left"></i>
+          <div style="font-weight:600;">Oversigt over instaspots</div>
+        </div>
+
+        <div class="group-sep"></div>
+        <div class="group">
+          <div class="group-title">Butikker</div>
+          <ul class="group-list">
+            <li><a class="menu-link" href="./butikker/binderiet.html">Binderiet</a></li>
+            <li><a class="menu-link" href="./butikker/vitrinen.html">Vitrinen</a></li>
+          </ul>
+        </div>
+
+        <div class="group-sep"></div>
+        <div class="group">
+          <div class="group-title">Steder</div>
+          <ul class="group-list">
+            <li><a class="menu-link" href="./steder/havnen.html">Havnen</a></li>
+            <li><a class="menu-link" href="./steder/torvet.html">Torvet</a></li>
+            <li><a class="menu-link" href="./steder/den-gamle-by.html">Den gamle by</a></li>
+            <li><a class="menu-link" href="./steder/den-hvide-bro.html">Den hvide bro</a></li>
+          </ul>
+        </div>
+
+        <div class="group-sep"></div>
+        <div class="group">
+          <div class="group-title">Cafeer</div>
+          <ul class="group-list">
+            <li><a class="menu-link" href="./cafeer/havnen.html">Havnen</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <main class="container my-4">
+    <article class="hero-card">
+      <div class="hero-image-wrap" aria-label="Spot hero">
+        <img src="https://picsum.photos/id/1011/800/600" alt="Binderiet i Køge" class="hero-image">
+        <button class="hero-arrow left" aria-label="Forrige" id="heroPrev"><i class="bi bi-chevron-left"></i></button>
+        <button class="hero-arrow right" aria-label="Næste" id="heroNext"><i class="bi bi-chevron-right"></i></button>
+      </div>
+
+      <h2 class="spot-title">Binderiet i Køge </h2>
+
+      <div class="spot-lead text-center mb-2">
+        <p class="mb-0"><strong>Binderiet er et hyggeligt lille værksted midt i Køge</strong>, hvor blomster, dekoration og kreativitet går hånd i hånd.</p>
+      </div>
+
+      <div class="spot-desc mx-auto">
+        Butikken emmer af stil, charme og personlighed, og du kan både shoppe smukke buketter, grønne planter og interiør, mens du får content til dine stories og dit feed.
+
+        <p style="margin-top:1rem;">
+          Tag dine venner under armen, kig forbi i hjertet af Køge, og fang den insta-værdige stemning, før blomsterne skifter med sæsonen.
+        </p>
+      </div>
+
+      <!-- 3-column square grid (left-center-right on wide screens, stacked on mobile) -->
+      <div class="thumb-grid" role="list" aria-label="Billeder">
+        <!-- LEFT -->
+        <div class="thumb-wrap">
+          <a class="thumb" href="./butikker/vitrinen.html" role="listitem" title="Vitrinen">
+            <img src="https://picsum.photos/id/1025/600/600" alt="Vitrinen">
+          </a>
+          <a class="pill" href="./butikker/vitrinen.html">Vitrinen</a>
+        </div>
+
+        <!-- MIDDLE -->
+        <div class="thumb-wrap">
+          <a class="thumb" href="./steder/koeges-kaffehar.html" role="listitem" title="Køges kaffehar">
+            <img src="https://picsum.photos/id/1062/600/600" alt="Køges kaffehar">
+          </a>
+          <a class="pill" href="./steder/koeges-kaffehar.html">Køges kaffehar</a>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="thumb-wrap">
+          <a class="thumb" href="./steder/havnen.html" role="listitem" title="Havnen">
+            <img src="https://picsum.photos/id/1016/600/600" alt="Havnen">
+          </a>
+          <a class="pill" href="./steder/havnen.html">Havnen</a>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="map-wrap mt-3">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2510.2151236670215!2d12.177099838438446!3d55.456865410218846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4652f1aca26ab8ed%3A0x9d97d47216ca7fac!2sVitrinen%20og%20vitrinens%20K%C3%B8bmandshandel!5e0!3m2!1sda!2sdk!4v1764753408137!5m2!1sda!2sdk" width="600" height="450" style="border:0; width:100%; height:320px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Vitrinen map"></iframe>
+      </div>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer id="siteFooter" class="fixed-bottom shadow">
+    <div class="container">
+      <div class="row align-items-center gx-3" style="min-height:72px;">
+        <div class="col-6 col-md-6 text-start">
+          <div class="footer-contact text-dark" style="font-size:1rem; line-height:1.2;">
+            Kontakt@KøgeRuten.dk<br>+45 XX XX XX XX
+          </div>
+        </div>
+
+        <div class="col-6 col-md-6 text-end">
+          <div class="d-inline-flex align-items-center gap-2 footer-icons">
+            <a href="https://instagram.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="Instagram" target="_blank" rel="noopener">
+              <i class="bi bi-instagram" style="font-size:1.2rem; color:#fff;"></i>
+            </a>
+            <a href="https://facebook.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="Facebook" target="_blank" rel="noopener">
+              <i class="bi bi-facebook" style="font-size:1.2rem; color:#fff;"></i>
+            </a>
+            <a href="https://tiktok.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="TikTok" target="_blank" rel="noopener">
+              <i class="bi bi-tiktok" style="font-size:1.2rem; color:#fff;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Auto footer padding -->
+  <script>
+    (function(){
+      const footer = document.getElementById('siteFooter');
+      function updateBodyPadding(){
+        if(!footer) return;
+        const height = Math.ceil(footer.getBoundingClientRect().height);
+        document.body.style.paddingBottom = height + 'px';
+      }
+      window.addEventListener('resize', updateBodyPadding);
+      window.addEventListener('load', updateBodyPadding);
+      updateBodyPadding();
+    })();
+  </script>
+
+  <!-- Offcanvas/submenu + robust link handling (stable) -->
+  <script>
+    (function(){
+      const openBtn = document.getElementById('openOversigt');
+      const mainMenu = document.getElementById('mainMenu');
+      const sub = document.getElementById('oversigtSub');
+      const back = document.getElementById('backToMain');
+      const drawer = document.getElementById('drawer');
+
+      function openSubmenu(){
+        mainMenu.style.display = 'none';
+        sub.classList.add('show');
+        sub.setAttribute('aria-hidden','false');
+        openBtn.setAttribute('aria-expanded','true');
+      }
+
+      function closeSubmenu(){
+        sub.classList.remove('show');
+        sub.setAttribute('aria-hidden','true');
+        setTimeout(()=> mainMenu.style.display = '', 0);
+        openBtn.setAttribute('aria-expanded','false');
+      }
+
+      // click / keyboard handlers
+      openBtn?.addEventListener('click', openSubmenu);
+      openBtn?.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openSubmenu(); }
+      });
+
+      back?.addEventListener('click', closeSubmenu);
+      back?.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); closeSubmenu(); }
+      });
+
+      // Reset submenu when offcanvas closes
+      drawer.addEventListener('hidden.bs.offcanvas', function(){ closeSubmenu(); });
+
+      // close offcanvas and navigate for link clicks inside it
+      drawer.addEventListener('click', function(e){
+        const link = e.target.closest('a.menu-link');
+        if(!link) return;
+        if(link.dataset.noClose === "true") return;
+
+        let href = link.getAttribute('href') || '';
+        const isRelative = href.startsWith('/') || href.startsWith('./') || href.startsWith('../');
+        const hasProtocol = href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('tel:');
+
+        if(!hasProtocol && !isRelative && /\.[a-z]{2,}$/i.test(href)){
+          href = 'https://' + href.replace(/^https?:\/\//, '');
+        }
+
+        const targetBlank = link.target === '_blank';
+
+        const bsOff = bootstrap.Offcanvas.getInstance(drawer);
+        if(bsOff) bsOff.hide();
+
+        setTimeout(()=>{
+          if(targetBlank) window.open(href, '_blank', 'noopener');
+          else window.location.href = href;
+        }, 160);
+      });
+    })();
+  </script>
+
+  <!-- Hero arrows placeholder -->
+  <script>
+    (function(){
+      const prev = document.getElementById('heroPrev');
+      const next = document.getElementById('heroNext');
+      const heroImg = document.querySelector('.hero-image');
+
+      // Image set (3 images total). Keep these small edits isolated.
+      const images = [
+        'instaBilleder/Binderiet1.jpg',
+        'instaBilleder/Binderiet2.jpg',
+        'instaBilleder/Binderiet3.jpg'
+      ];
+
+      let idx = 0;
+      // counts how many times 'next' was pressed; after 3 next-presses we jump to first
+      let nextPressCount = 0;
+
+      function showSlide(i){
+        i = (i + images.length) % images.length;
+        // fade-out, change src when hidden, then fade-in
+        if(!heroImg) return;
+        heroImg.style.opacity = '0';
+        // ensure image swap after fade-out
+        setTimeout(()=>{
+          heroImg.src = images[i];
+          heroImg.style.opacity = '1';
+        }, 180);
+        idx = i;
+      }
+
+      function nextSlide(){
+        nextPressCount++;
+        if(nextPressCount >= 3){
+          // after 3 next presses, reset to first slide
+          nextPressCount = 0;
+          showSlide(0);
+          return;
+        }
+        showSlide(idx + 1);
+      }
+
+      function prevSlide(){
+        // going backwards resets the next-press counter
+        nextPressCount = 0;
+        showSlide(idx - 1);
+      }
+
+      // initialize
+      showSlide(idx);
+
+      prev?.addEventListener('click', prevSlide);
+      next?.addEventListener('click', nextSlide);
+
+      // also allow keyboard navigation while focusing the buttons
+      prev?.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' ') prevSlide(); });
+      next?.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' ') nextSlide(); });
+    })();
+  </script>
+</body>
+</html>
+
+  <!-- ===== Footer: fixed to bottom ===== -->
+  <footer id="siteFooter" class="fixed-bottom shadow">
+    <div class="container">
+      <div class="row align-items-center gx-3" style="min-height:72px;">
+        <div class="col-6 col-md-6 text-start">
+          <div class="footer-contact text-dark" style="font-size:1rem; line-height:1.2;">
+            Kontakt@KøgeRuten.dk<br>+45 XX XX XX XX
+          </div>
+        </div>
+
+        <div class="col-6 col-md-6 text-end">
+          <div class="d-inline-flex align-items-center gap-2 footer-icons">
+            <a href="https://instagram.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="Instagram">
+              <i class="bi bi-instagram" aria-hidden="true" style="font-size:1.2rem;"></i>
+            </a>
+            <a href="https://facebook.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="Facebook">
+              <i class="bi bi-facebook" aria-hidden="true" style="font-size:1.2rem;"></i>
+            </a>
+            <a href="https://tiktok.com" class="icon d-inline-flex align-items-center justify-content-center" aria-label="TikTok">
+              <i class="bi bi-tiktok" aria-hidden="true" style="font-size:1.2rem;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Auto-adjust bottom padding to prevent footer overlap -->
+  <script>
+    (function(){
+      const footer = document.getElementById('siteFooter');
+
+      function updateBodyPadding(){
+        if(!footer) return;
+        const rect = footer.getBoundingClientRect();
+        const height = Math.ceil(rect.height);
+        document.documentElement.style.setProperty('--footer-height', height + 'px');
+        document.body.style.paddingBottom = height + 'px';
+      }
+
+      window.addEventListener('resize', updateBodyPadding);
+      window.addEventListener('load', updateBodyPadding);
+      // initial call
+      updateBodyPadding();
+    })();
+  </script>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Offcanvas submenu behaviour + keyboard support -->
+  <script>
+    (function(){
+      const openBtn = document.getElementById('openOversigt');
+      const mainMenu = document.getElementById('mainMenu');
+      const sub = document.getElementById('oversigtSub');
+      const back = document.getElementById('backToMain');
+      const drawer = document.getElementById('drawer');
+
+      function openSubmenu(){
+        mainMenu.style.display = 'none';
+        sub.classList.add('show');
+        sub.setAttribute('aria-hidden', 'false');
+        // update chevron aria
+        openBtn.setAttribute('aria-expanded', 'true');
+      }
+
+      function closeSubmenu(){
+        sub.classList.remove('show');
+        sub.setAttribute('aria-hidden', 'true');
+        setTimeout(()=> mainMenu.style.display = '', 0);
+        openBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      openBtn?.addEventListener('click', openSubmenu);
+      // keyboard: Enter/Space to open
+      openBtn?.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          openSubmenu();
+        }
+      });
+
+      back?.addEventListener('click', closeSubmenu);
+      back?.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          closeSubmenu();
+        }
+      });
+
+      // Ensure state resets when offcanvas closes
+      drawer.addEventListener('hidden.bs.offcanvas', function(){
+        closeSubmenu();
+      });
+
+      // Optional: close offcanvas when clicking any internal link (helpful for SPA or fast nav)
+      drawer.addEventListener('click', function(e){
+        const link = e.target.closest('a.menu-link');
+        if(link){
+          // allow default navigation; but also hide offcanvas immediately for snappier UX
+          const bsOff = bootstrap.Offcanvas.getInstance(drawer);
+          if(bsOff) bsOff.hide();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
